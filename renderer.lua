@@ -7,27 +7,31 @@ end
 function showFile(files, index)
 	local file = files[index]
 
-	term.setBackgroundColor(colors.white)
-	term.setCursorPos(1, index)
-
-	-- Icon
-	local color
-	if file.isDir then
-		color = colors.yellow
+	local bgcolor
+	if file.selected then
+		bgcolor = colors.lightBlue
 	else
-		color = colors.lightGray
+		bgcolor = colors.white
 	end
 
-	term.setTextColor(colors.white)
-	term.setBackgroundColor(color)
-	term.write("\151")
-	term.setTextColor(color)
-	term.setBackgroundColor(colors.white)
-	term.write("\148")
+	term.setBackgroundColor(bgcolor)
+	term.setTextColor(colors.black)
+	term.setCursorPos(1, index)
+
+	-- Arrow + Icon
+	if file.isDir then
+		term.write("\026")
+		term.setTextColor(colors.yellow)
+	else
+		term.write(" ")
+		term.setTextColor(colors.lightGray)
+	end
+
+	term.write("\138")
+	term.write("\133")
 
 	-- Name
 	term.setTextColor(colors.black)
-	term.setBackgroundColor(colors.white)
 	term.write(file.name)
 
 	-- Whitespace
