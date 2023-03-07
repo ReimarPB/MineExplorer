@@ -23,9 +23,15 @@ function showFile(files, index)
 	term.setTextColor(colors.black)
 	term.setCursorPos(1, index)
 
+	term.write(string.rep(" ", file.depth - 1))
+
 	-- Arrow + Icon
 	if file.isDir then
-		term.write("\026")
+		if file.expanded then
+			term.write("\025")
+		else
+			term.write("\026")
+		end
 		term.setTextColor(colors.yellow)
 	else
 		term.write(" ")

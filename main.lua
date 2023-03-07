@@ -30,6 +30,12 @@ while true do
 				renderer.showFile(files.files, selection)
 				renderer.showFile(files.files, selection - 1)
 			end
+		elseif key == keys.right then
+			files.expand()
+			renderer.showFiles(files.files)
+		elseif key == keys.left then
+			files.collapse()
+			renderer.showFiles(files.files)
 		end
 	end
 end
