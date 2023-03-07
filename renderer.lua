@@ -47,7 +47,12 @@ function showFile(files, index)
 	else
 		term.setBackgroundColor(colors.white)
 	end
-	term.setTextColor(colors.black)
+
+	if not file.selected and file.name:find("^%.") then
+		term.setTextColor(colors.lightGray)
+	else
+		term.setTextColor(colors.black)
+	end
 	term.write(file.name)
 
 	-- Fill remaining space
