@@ -98,3 +98,7 @@ function updateSelection(oldIndex, newIndex)
 	end
 end
 
+function getFileIndexFromY(y)
+	return y - scrollY
+end
+

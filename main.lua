@@ -51,6 +51,14 @@ while true do
 			files.collapse()
 			renderer.showFiles()
 		end
+	elseif event == "mouse_click" then
+		local button, x, y = p1, p2, p3
+		local oldSelection = files.getSelectedIndex()
+
+		local fileIndex = renderer.getFileIndexFromY(y)
+
+		files.setSelection(fileIndex)
+		renderer.updateSelection(oldSelection, fileIndex)
 	elseif event == "term_resize" then
 		renderer.showFiles()
 	end
