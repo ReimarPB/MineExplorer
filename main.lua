@@ -1,4 +1,4 @@
-local dir = fs.getDir(shell.getRunningProgram())
+_G["dir"] = fs.getDir(shell.getRunningProgram())
 
 os.loadAPI(fs.combine(dir, "files.lua"))
 os.loadAPI(fs.combine(dir, "renderer.lua"))
@@ -17,25 +17,27 @@ while true do
 		local key = p1
 
 		if key == keys.down then
-			local selection = files.getSelectedIndex()
+			local selection = files.getSelectedIndex() 
 			if (selection <= #files.files - 1) then
 				files.setSelection(selection + 1)
-				renderer.showFile(files.files, selection)
-				renderer.showFile(files.files, selection + 1)
+				renderer.showFile(selection)
+				renderer.showFile(selection + 1)
+				renderer.scrollTo(selection + 1)
 			end
 		elseif key == keys.up then
 			local selection = files.getSelectedIndex()
 			if (selection > 1) then
 				files.setSelection(selection - 1)
-				renderer.showFile(files.files, selection)
-				renderer.showFile(files.files, selection - 1)
+				renderer.showFile(selection)
+				renderer.showFile(selection - 1)
+				renderer.scrollTo(selection - 1)
 			end
 		elseif key == keys.right then
 			files.expand()
-			renderer.showFiles(files.files)
+			renderer.showFiles()
 		elseif key == keys.left then
 			files.collapse()
-			renderer.showFiles(files.files)
+			renderer.showFiles()
 		end
 	end
 end
