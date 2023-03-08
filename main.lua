@@ -39,6 +39,8 @@ while true do
 			files.collapse()
 			renderer.showFiles()
 		end
+	elseif event == "term_resize" then
+		renderer.showFiles()
 	end
 end
 
