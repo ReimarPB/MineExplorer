@@ -33,13 +33,18 @@ function showFile(index)
 	term.write(string.rep(" ", file.depth - 1))
 
 	-- Arrow + Icon
-	if file.isDir then
+	if file.type ~= files.FileType.FILE then
 		if file.expanded then
 			term.write("\025")
 		else
 			term.write("\026")
 		end
-		term.setTextColor(colors.yellow)
+
+		if file.type == files.FileType.DIRECTORY then
+			term.setTextColor(colors.yellow)
+		else
+			term.setTextColor(colors.gray)
+		end
 	else
 		term.write(" ")
 		term.setTextColor(colors.lightGray)
