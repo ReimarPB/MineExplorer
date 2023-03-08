@@ -18,20 +18,32 @@ while true do
 
 		if key == keys.down then
 			local selection = files.getSelectedIndex() 
+
 			if (selection <= #files.files - 1) then
 				files.setSelection(selection + 1)
-				renderer.showFile(selection)
-				renderer.showFile(selection + 1)
-				renderer.scrollTo(selection + 1)
+				renderer.updateSelection(selection, selection + 1)
 			end
+
 		elseif key == keys.up then
 			local selection = files.getSelectedIndex()
+
 			if (selection > 1) then
 				files.setSelection(selection - 1)
-				renderer.showFile(selection)
-				renderer.showFile(selection - 1)
-				renderer.scrollTo(selection - 1)
+				renderer.updateSelection(selection, selection - 1)
 			end
+
+		elseif key == keys.home then
+			local oldSelection = files.getSelectedIndex()
+
+			files.setSelection(1)
+			renderer.updateSelection(oldSelection, 1)
+
+		elseif key == keys["end"] then
+			local oldSelection = files.getSelectedIndex()
+
+			files.setSelection(#files.files)
+			renderer.updateSelection(oldSelection, #files.files)
+
 		elseif key == keys.right then
 			files.expand()
 			renderer.showFiles()

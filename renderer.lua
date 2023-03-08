@@ -71,16 +71,30 @@ function showFile(index)
 	term.write(string.rep(" ", width - x + 1))
 end
 
-function scrollTo(index)
+-- Returns whether it actually scrolled
+local function scrollTo(index)
 	local width, height = term.getSize()
 
 	if index <= 0 - scrollY then
 		scrollY = -index + 1
-		showFiles()
-	elseif index > height - scrollY then
-		scrollY = height - index
-		showFiles()
+		return true
 	end
 
+	if index > height - scrollY then
+		scrollY = height - index
+		return true
+	end
+
+	return false
+end
+
+-- Scrolls to new selection if necessary and draws changes
+function updateSelection(oldIndex, newIndex)
+	if scrollTo(newIndex) then
+		showFiles()
+	else
+		showFile(oldIndex)
+		showFile(newIndex)
+	end
 end
 
