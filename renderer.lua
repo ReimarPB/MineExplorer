@@ -33,6 +33,7 @@ function showFile(index)
 	term.write(string.rep(" ", file.depth - 1))
 
 	-- Arrow + Icon
+	local color1, color2
 	if file.type ~= files.FileType.FILE then
 		if file.expanded then
 			term.write("\025")
@@ -40,16 +41,30 @@ function showFile(index)
 			term.write("\026")
 		end
 
-		if file.type == files.FileType.DIRECTORY then
-			term.setTextColor(colors.yellow)
+		if file.readonly then
+			color1 = colors.orange
+			color2 = colors.orange
+		elseif file.type == files.FileType.DIRECTORY then
+			color1 = colors.yellow
+			color2 = colors.yellow
 		else
-			term.setTextColor(colors.gray)
+			color1 = colors.gray
+			color2 = colors.gray
 		end
 	else
 		term.write(" ")
-		term.setTextColor(colors.lightGray)
+		color1 = colors.lightGray
+		color2 = colors.lightGray
 	end
-	term.write("\138\133")
+
+	if file.name:match("%.lua$") then
+		color2 = colors.blue
+	end
+
+	term.setTextColor(color1)
+	term.write("\138")
+	term.setTextColor(color2)
+	term.write("\133")
 
 	-- Name
 	if file.selected then

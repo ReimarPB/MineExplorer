@@ -8,6 +8,7 @@ FileType = {
 -- * name: string
 -- * path: string
 -- * type: FileType
+-- * readonly: bool
 -- * depth: int
 -- * selected: bool
 -- * expanded: bool
@@ -28,6 +29,7 @@ local function loadFiles(path, depth, index)
 			name = file,
 			path = filePath,
 			type = type,
+			readonly = fs.isReadOnly(filePath),
 			depth = depth + 1,
 			selected = false,
 			expanded = false,
