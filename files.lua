@@ -92,3 +92,8 @@ function collapse()
 	file.expanded = false
 end
 
+function getFileExtension(name)
+	if not string.find(name, "%.") then return "" end
+	return string.gsub(name, "%w*%.", "")
+end
+
