@@ -38,7 +38,10 @@ local function loadFiles(path, depth, index)
 
 	-- Sort by file type
 	table.sort(newFiles, function(a, b)
-		return a.type > b.type
+		if a.type ~= b.type then
+			return a.type > b.type
+		end
+		return a.name < b.name
 	end)
 
 	-- Add to files array

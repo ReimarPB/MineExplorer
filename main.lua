@@ -51,6 +51,7 @@ while true do
 		elseif key == keys.right or key == keys.l then
 			files.expand()
 			renderer.showFiles()
+
 		elseif key == keys.left or key == keys.h then
 			files.collapse()
 			renderer.showFiles()
@@ -60,9 +61,11 @@ while true do
 		local oldSelection = files.getSelectedIndex()
 
 		local fileIndex = renderer.getFileIndexFromY(y)
+		if files.files[fileIndex] then
+			files.setSelection(fileIndex)
+			renderer.updateSelection(oldSelection, fileIndex)
+		end
 
-		files.setSelection(fileIndex)
-		renderer.updateSelection(oldSelection, fileIndex)
 	elseif event == "term_resize" then
 		renderer.showFiles()
 	end
