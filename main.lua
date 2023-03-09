@@ -1,7 +1,11 @@
 _G["dir"] = fs.getDir(shell.getRunningProgram())
+_G["getapi"] = function(name)
+	os.loadAPI(fs.combine(dir, name .. ".lua"))
+	if _G[name .. ".lua"] then _G[name] = _G[name .. ".lua"] end
+end
 
-os.loadAPI(fs.combine(dir, "files.lua"))
-os.loadAPI(fs.combine(dir, "renderer.lua"))
+getapi("files")
+getapi("renderer")
 
 term.clear()
 

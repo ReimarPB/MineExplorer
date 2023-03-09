@@ -1,4 +1,4 @@
-os.loadAPI(fs.combine(dir, "files.lua"))
+getapi("files")
 
 local scrollY = 0
 
