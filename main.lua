@@ -16,7 +16,7 @@ while true do
 	if event == "key" then
 		local key = p1
 
-		if key == keys.down then
+		if key == keys.down or key == keys.j then
 			local selection = files.getSelectedIndex() 
 
 			if (selection <= #files.files - 1) then
@@ -24,7 +24,7 @@ while true do
 				renderer.updateSelection(selection, selection + 1)
 			end
 
-		elseif key == keys.up then
+		elseif key == keys.up or key == keys.k then
 			local selection = files.getSelectedIndex()
 
 			if (selection > 1) then
@@ -44,10 +44,10 @@ while true do
 			files.setSelection(#files.files)
 			renderer.updateSelection(oldSelection, #files.files)
 
-		elseif key == keys.right then
+		elseif key == keys.right or key == keys.l then
 			files.expand()
 			renderer.showFiles()
-		elseif key == keys.left then
+		elseif key == keys.left or key == keys.h then
 			files.collapse()
 			renderer.showFiles()
 		end
