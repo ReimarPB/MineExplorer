@@ -1,4 +1,5 @@
-getapi("files")
+import("files")
+import("events")
 
 local scrollY = 0
 
@@ -116,4 +117,8 @@ end
 function getFileIndexFromY(y)
 	return y - scrollY
 end
+
+events.addListener("term_resize", function()
+	showAllFiles()
+end)
 
