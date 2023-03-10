@@ -28,7 +28,7 @@ function showFiles()
 	local width, height = term.getSize()
 	if #files < height then
 		term.setBackgroundColor(colors.white)
-		for i = #files.files + 1, height do
+		for i = #files.files + 1 + CONTENT_OFFSET_Y, height do
 			term.setCursorPos(1, i)
 			term.write(string.rep(" ", width))
 		end
@@ -112,13 +112,13 @@ end
 local function scrollTo(index)
 	local width, height = term.getSize()
 
-	if index <= 0 - scrollY then
-		scrollY = -index + 1
+	if index <= 0 - scrollY + CONTENT_OFFSET_Y then
+		scrollY = -index + CONTENT_OFFSET_Y
 		return true
 	end
 
-	if index > height - scrollY then
-		scrollY = height - index
+	if index > height - scrollY - CONTENT_OFFSET_Y then
+		scrollY = height - index - CONTENT_OFFSET_Y
 		return true
 	end
 
