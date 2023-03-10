@@ -2,6 +2,12 @@ import("events")
 import("files")
 import("renderer")
 
+local function clearScreen()
+	term.setBackgroundColor(colors.black)
+	term.setCursorPos(1, 1)
+	term.clear()
+end
+
 local function getProgramForExtension(extension)
 	if not settigns then return "edit" end
 	return settings.get("minex.programs." .. extension, settings.get("minex.default_program", "edit"))
@@ -25,9 +31,7 @@ local function doSecondaryAction(file)
 	if file.type == files.FileType.FILE then
 		shell.run("/" .. file.path)
 	else
-		term.setBackgroundColor(colors.black)
-		term.setCursorPos(1, 1)
-		term.clear()
+		clearScreen()
 		shell.setDir(file.path)
 	end
 end
@@ -76,8 +80,18 @@ events.addListener("key", function(key)
 		doSecondaryAction(file)
 
 		return true
+
 	end
 
+end)
+
+-- Quit when pressing Q
+-- This is in key up to prevent typing 'q' in the terminal
+events.addListener("key_up", function(key)
+	if key == keys.q then
+		clearScreen()
+		return true
+	end
 end)
 
 events.addListener("mouse_click", function(btn, x, y)
@@ -87,6 +101,7 @@ events.addListener("mouse_click", function(btn, x, y)
 	local fileIndex = renderer.getFileIndexFromY(y)
 	local file = files.files[fileIndex]
 
+	-- Deselect when pressing outside
 	if not file then
 		files.deselect()
 		renderer.showFiles()
@@ -94,6 +109,7 @@ events.addListener("mouse_click", function(btn, x, y)
 		return
 	end
 
+	-- Select if not selected already
 	if not file.selected then
 		files.setSelection(fileIndex)
 		renderer.updateSelection(oldSelection, fileIndex)
