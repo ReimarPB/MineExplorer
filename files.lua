@@ -77,7 +77,7 @@ function expand()
 	local index = getSelectedIndex()
 	local file = files[index]
 
-	if file.type == FileType.FILE or file.expanded then return end
+	if not file or file.type == FileType.FILE or file.expanded then return end
 
 	loadFiles(file.path, file.depth, index)
 
@@ -88,7 +88,7 @@ function collapse()
 	local index = getSelectedIndex()
 	local file = files[index]
 
-	if file.type == FileType.FILE or not file.expanded then return end
+	if not file or file.type == FileType.FILE or not file.expanded then return end
 
 	local i = index + 1
 	while i <= #files and files[i].depth > file.depth do

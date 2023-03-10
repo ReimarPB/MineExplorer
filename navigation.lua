@@ -40,12 +40,16 @@ events.addListener("key", function(key)
 	local selection = files.getSelectedIndex()
 
 	if key == keys.down or key == keys.j then
+		if not selection then selection = 0 end
+
 		if (selection <= #files.files - 1) then
 			files.setSelection(selection + 1)
 			renderer.updateSelection(selection, selection + 1)
 		end
 
 	elseif key == keys.up or key == keys.k then
+		if not selection then selection = #files.files + 1 end
+
 		if (selection > 1) then
 			files.setSelection(selection - 1)
 			renderer.updateSelection(selection, selection - 1)

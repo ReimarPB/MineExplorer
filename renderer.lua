@@ -132,7 +132,7 @@ function updateSelection(oldIndex, newIndex)
 	if scrollTo(newIndex) then
 		showFiles()
 	else
-		if oldIndex then showFile(oldIndex) end
+		if oldIndex and files.files[oldIndex] then showFile(oldIndex) end
 		showFile(newIndex)
 	end
 	showPath()
@@ -148,11 +148,12 @@ end)
 
 events.addListener("mouse_scroll", function(direction)
 	local width, height = term.getSize()
-	if scrollY + direction < 0 or scrollY + direction > #files.files - height then
-		return
-	end
+	local newScrollY = scrollY + direction
 
-	scrollY = scrollY + direction
+	if newScrollY < 0 or newScrollY > #files.files - height then return end
+
+	scrollY = newScrollY
+
 	showFiles()
 end)
 
