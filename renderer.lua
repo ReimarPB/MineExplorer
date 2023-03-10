@@ -6,8 +6,9 @@ local CONTENT_OFFSET_Y = 1
 
 function showPath()
 	local index = files.getSelectedIndex()
-	if not index then return end
-	local path = "/" .. files.files[index].path
+	local path
+	if index then path = "/" .. files.files[index].path
+	else path = "/" end
 
 	term.setCursorPos(1, 1)
 	term.setBackgroundColor(colors.lightGray)
@@ -130,7 +131,7 @@ function updateSelection(oldIndex, newIndex)
 	if scrollTo(newIndex) then
 		showFiles()
 	else
-		showFile(oldIndex)
+		if oldIndex then showFile(oldIndex) end
 		showFile(newIndex)
 	end
 	showPath()
