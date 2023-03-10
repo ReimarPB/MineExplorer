@@ -37,7 +37,7 @@ end
 
 function showFile(index)
 	local width, height = term.getSize()
-	local y = index + scrollY + CONTENT_OFFSET_Y
+	local y = index - scrollY + CONTENT_OFFSET_Y
 
 	if y < 1 + CONTENT_OFFSET_Y or y > height then return end
 
@@ -112,12 +112,12 @@ end
 local function scrollTo(index)
 	local _, height = term.getSize()
 
-	if index <= 0 - scrollY + CONTENT_OFFSET_Y then
+	if index <= 0 + scrollY + CONTENT_OFFSET_Y then
 		scrollY = -index + CONTENT_OFFSET_Y
 		return true
 	end
 
-	if index > height - scrollY - CONTENT_OFFSET_Y then
+	if index > height + scrollY - CONTENT_OFFSET_Y then
 		scrollY = height - index - CONTENT_OFFSET_Y
 		return true
 	end
@@ -137,7 +137,7 @@ function updateSelection(oldIndex, newIndex)
 end
 
 function getFileIndexFromY(y)
-	return y - scrollY - CONTENT_OFFSET_Y
+	return y + scrollY - CONTENT_OFFSET_Y
 end
 
 events.addListener("term_resize", function()
@@ -146,11 +146,11 @@ end)
 
 events.addListener("mouse_scroll", function(direction)
 	local width, height = term.getSize()
-	if scrollY - direction > 0 or scrollY - direction < -#files.files + height then
+	if scrollY + direction < 0 or scrollY + direction > #files.files - height then
 		return
 	end
 
-	scrollY = scrollY - direction
+	scrollY = scrollY + direction
 	showFiles()
 end)
 
