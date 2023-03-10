@@ -39,7 +39,7 @@ function showFile(index)
 	local width, height = term.getSize()
 	local y = index + scrollY + CONTENT_OFFSET_Y
 
-	if y < 1 or y > height then return end
+	if y < 1 + CONTENT_OFFSET_Y or y > height then return end
 
 	local file = files.files[index]
 
@@ -110,7 +110,7 @@ end
 
 -- Returns whether it actually scrolled
 local function scrollTo(index)
-	local width, height = term.getSize()
+	local _, height = term.getSize()
 
 	if index <= 0 - scrollY + CONTENT_OFFSET_Y then
 		scrollY = -index + CONTENT_OFFSET_Y
@@ -141,6 +141,16 @@ function getFileIndexFromY(y)
 end
 
 events.addListener("term_resize", function()
-	showAllFiles()
+	showEverything()
+end)
+
+events.addListener("mouse_scroll", function(direction)
+	local width, height = term.getSize()
+	if scrollY - direction > 0 or scrollY - direction < -#files.files + height then
+		return
+	end
+
+	scrollY = scrollY - direction
+	showFiles()
 end)
 

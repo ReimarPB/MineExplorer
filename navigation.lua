@@ -72,8 +72,10 @@ events.addListener("mouse_click", function(btn, x, y)
 
 	if not files.files[fileIndex] then
 		files.deselect()
+		return
 	end
 
 	files.setSelection(fileIndex)
 	renderer.updateSelection(oldSelection, fileIndex)
 end)
+
