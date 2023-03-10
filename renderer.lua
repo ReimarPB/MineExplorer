@@ -112,14 +112,15 @@ end
 -- Returns whether it actually scrolled
 local function scrollTo(index)
 	local _, height = term.getSize()
+	height = height - CONTENT_OFFSET_Y
 
-	if index <= 0 + scrollY + CONTENT_OFFSET_Y then
-		scrollY = -index + CONTENT_OFFSET_Y
+	if index <= scrollY + 1 then
+		scrollY = index - 1
 		return true
 	end
 
-	if index > height + scrollY - CONTENT_OFFSET_Y then
-		scrollY = height - index - CONTENT_OFFSET_Y
+	if index > scrollY + height - 1 then
+		scrollY = index - height
 		return true
 	end
 
