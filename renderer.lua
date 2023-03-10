@@ -2,6 +2,22 @@ import("files")
 import("events")
 
 local scrollY = 0
+local CONTENT_OFFSET_Y = 1
+
+function showPath()
+	local index = files.getSelectedIndex()
+	if not index then return end
+	local path = "/" .. files.files[index].path
+
+	term.setCursorPos(1, 1)
+	term.setBackgroundColor(colors.lightGray)
+	term.setTextColor(colors.black)
+	term.write(path)
+
+	-- Fill remaining space
+	local width, _ = term.getSize()
+	term.write(string.rep(" ", width - #path + 1))
+end
 
 function showFiles()
 	for i, file in ipairs(files.files) do
@@ -21,7 +37,7 @@ end
 
 function showFile(index)
 	local width, height = term.getSize()
-	local y = index + scrollY
+	local y = index + scrollY + CONTENT_OFFSET_Y
 
 	if y < 1 or y > height then return end
 
@@ -112,6 +128,7 @@ function updateSelection(oldIndex, newIndex)
 		showFile(oldIndex)
 		showFile(newIndex)
 	end
+	showPath()
 end
 
 function getFileIndexFromY(y)

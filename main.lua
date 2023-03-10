@@ -26,7 +26,8 @@ term.clear()
 files.loadAllFiles()
 files.files[1].selected = true
 
-renderer.showFiles(files.files)
+renderer.showFiles()
+renderer.showPath()
 
 events.listen()
 
