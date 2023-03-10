@@ -1,4 +1,5 @@
 _G["dir"] = fs.getDir(shell.getRunningProgram())
+_G["shell"] = shell
 _G["import"] = function(name)
 	os.loadAPI(fs.combine(dir, name .. ".lua"))
 	if _G[name .. ".lua"] then _G[name] = _G[name .. ".lua"] end
@@ -8,11 +9,6 @@ import("files")
 import("renderer")
 import("events")
 import("navigation")
-
-function getProgramForExtension(extension)
-	if not settigns then return "edit" end
-	return settings.get("minex.programs." .. extension, settings.get("minex.default_program", "edit"))
-end
 
 -- Set default settings
 if false and settings and not settings.get("minex.default_program") then
@@ -26,8 +22,7 @@ term.clear()
 files.loadAllFiles()
 files.files[1].selected = true
 
-renderer.showFiles()
-renderer.showPath()
+renderer.showEverything()
 
 events.listen()
 

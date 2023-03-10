@@ -67,6 +67,12 @@ function setSelection(index)
 	end	
 end
 
+function deselect()
+	for _, file in ipairs(files) do
+		file.selected = false
+	end	
+end
+
 function expand()
 	local index = getSelectedIndex()
 	local file = files[index]

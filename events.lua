@@ -11,7 +11,7 @@ function listen()
 
 		if listeners[event] then
 			for _, callback in ipairs(listeners[event]) do
-				callback(p1, p2, p3)
+				if callback(p1, p2, p3) then return end -- Exit when callback returns true
 			end
 		end
 	end

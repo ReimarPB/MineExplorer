@@ -103,6 +103,11 @@ function showFile(index)
 	term.write(string.rep(" ", width - x + 1))
 end
 
+function showEverything()
+	showPath()
+	showFiles()
+end
+
 -- Returns whether it actually scrolled
 local function scrollTo(index)
 	local width, height = term.getSize()
@@ -132,7 +137,7 @@ function updateSelection(oldIndex, newIndex)
 end
 
 function getFileIndexFromY(y)
-	return y - scrollY
+	return y - scrollY - CONTENT_OFFSET_Y
 end
 
 events.addListener("term_resize", function()
