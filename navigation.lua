@@ -4,6 +4,7 @@ import("renderer")
 
 local function clearScreen()
 	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
 	term.setCursorPos(1, 1)
 	term.clear()
 end
@@ -27,12 +28,18 @@ local function doPrimaryAction(file)
 end
 
 -- Execute files, switch to folders and quit
+-- Returns whether to exit
 local function doSecondaryAction(file)
+	clearScreen()
 	if file.type == files.FileType.FILE then
 		shell.run("/" .. file.path)
+		term.write("Press any key to continue")
+		os.pullEvent("key")
+		renderer.showEverything()
+		return false
 	else
-		clearScreen()
 		shell.setDir(file.path)
+		return true
 	end
 end
 
@@ -81,9 +88,7 @@ events.addListener("key", function(key)
 		if not selection then return end
 
 		local file = files.files[selection]
-		doSecondaryAction(file)
-
-		return true
+		return doSecondaryAction(file)
 
 	end
 
