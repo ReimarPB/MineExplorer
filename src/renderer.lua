@@ -143,7 +143,7 @@ function getYFromFileIndex(index)
 	return index - scrollY + CONTENT_OFFSET_Y
 end
 
-function drawInput(input)
+function drawInput(input, cursorPos)
 	local width, _ = term.getSize()
 
 	term.setCursorPos(input.x, input.y)
@@ -154,6 +154,9 @@ function drawInput(input)
 
 	term.setBackgroundColor(input.backgroundColor)
 	term.write(string.rep(" ", width - input.x - #input.text))
+
+	term.setCursorBlink(true)
+	term.setCursorPos(input.x + cursorPos - 1, input.y)
 end
 
 events.addListener("term_resize", events.Focus.FILES, function()

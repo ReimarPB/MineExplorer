@@ -103,6 +103,7 @@ events.addListener("key", events.Focus.FILES, function(key)
 			color = colors.black,
 			backgroundColor = colors.white,
 			highlightColor = colors.lightGray,
+			cancelKey = keys.f2,
 			callback = function(newName)
 				if #newName == 0 then return true end
 
