@@ -24,5 +24,6 @@ files.files[1].selected = true
 
 renderer.showEverything()
 
+events.setFocus(events.Focus.FILES)
 events.listen()
 

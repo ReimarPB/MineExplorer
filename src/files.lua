@@ -103,3 +103,9 @@ function getFileExtension(name)
 	return string.gsub(name, "%w*%.", "")
 end
 
+function getCurrentPath()
+	local index = getSelectedIndex()
+	if not index then return "/" end
+	return "/" .. files[index].path
+end
+

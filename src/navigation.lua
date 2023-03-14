@@ -1,6 +1,7 @@
 import("events")
 import("files")
 import("renderer")
+import("input")
 
 local function clearScreen()
 	term.setBackgroundColor(colors.black)
@@ -43,7 +44,7 @@ local function doSecondaryAction(file)
 	end
 end
 
-events.addListener("key", function(key)
+events.addListener("key", events.Focus.FILES, function(key)
 	local selection = files.getSelectedIndex()
 
 	if key == keys.down or key == keys.j then
@@ -90,20 +91,50 @@ events.addListener("key", function(key)
 		local file = files.files[selection]
 		return doSecondaryAction(file)
 
+	-- Rename on F2
+	elseif key == keys.f2 then
+		if not selection then return end
+		local file = files.files[selection]
+
+		input.create({
+			text = file.name,
+			x = file.depth + 3,
+			y = renderer.getYFromFileIndex(selection),
+			color = colors.black,
+			backgroundColor = colors.white,
+			highlightColor = colors.lightGray,
+			callback = function(newName)
+				if #newName == 0 then return true end
+
+				local newPath = fs.combine(fs.getDir(file.path), newName)
+
+				if fs.exists(newPath) or fs.isReadOnly(file.path) then
+					return false
+				end
+
+				fs.move(file.path, newPath)
+				file.name = newName
+				file.path = newPath
+
+				renderer.showPath()
+
+				return true
+			end
+		})
 	end
 
 end)
 
 -- Quit when pressing Q
 -- This is in key up to prevent typing 'q' in the terminal
-events.addListener("key_up", function(key)
+events.addListener("key_up", events.Focus.FILES, function(key)
 	if key == keys.q then
 		clearScreen()
 		return true
 	end
 end)
 
-events.addListener("mouse_click", function(btn, x, y)
+events.addListener("mouse_click", events.Focus.FILES, function(btn, x, y)
 	if btn ~= 1 then return end
 
 	local oldSelection = files.getSelectedIndex()

@@ -5,10 +5,7 @@ local scrollY = 0
 local CONTENT_OFFSET_Y = 1
 
 function showPath()
-	local index = files.getSelectedIndex()
-	local path
-	if index then path = "/" .. files.files[index].path
-	else path = "/" end
+	local path = files.getCurrentPath()
 
 	term.setCursorPos(1, 1)
 	term.setBackgroundColor(colors.lightGray)
@@ -142,11 +139,30 @@ function getFileIndexFromY(y)
 	return y + scrollY - CONTENT_OFFSET_Y
 end
 
-events.addListener("term_resize", function()
+function getYFromFileIndex(index)
+	return index - scrollY + CONTENT_OFFSET_Y
+end
+
+function drawInput(input)
+	local width, _ = term.getSize()
+
+	term.setCursorPos(input.x, input.y)
+	term.setTextColor(input.color)
+
+	term.setBackgroundColor(input.highlightColor)
+	term.write(input.text)
+
+	term.setBackgroundColor(input.backgroundColor)
+	term.write(string.rep(" ", width - input.x - #input.text))
+end
+
+events.addListener("term_resize", events.Focus.FILES, function()
 	showEverything()
 end)
 
-events.addListener("mouse_scroll", function(direction)
+events.addListener("mouse_scroll", events.Focus.FILES, function(direction)
+	if focus.current ~= focus.Focus.FILES then return end
+
 	local width, height = term.getSize()
 	local newScrollY = scrollY + direction
 
