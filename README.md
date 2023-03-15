@@ -9,6 +9,7 @@ Features
 - Navigation with both mouse and keyboard
 - Color coded icons depending on type
 - Editing and executing files from within the explorer
+- Renaming files
 
 ## Installation
 

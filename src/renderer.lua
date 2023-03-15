@@ -164,8 +164,6 @@ events.addListener("term_resize", events.Focus.FILES, function()
 end)
 
 events.addListener("mouse_scroll", events.Focus.FILES, function(direction)
-	if focus.current ~= focus.Focus.FILES then return end
-
 	local width, height = term.getSize()
 	local newScrollY = scrollY + direction
 

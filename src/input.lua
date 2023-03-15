@@ -65,7 +65,7 @@ events.addListener("key", events.Focus.INPUT, function(key)
 		endInput()
 
 	elseif key == currentInput.cancelKey then
-		endInput()		
+		endInput()
 	end
 end)
 
