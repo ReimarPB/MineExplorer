@@ -82,8 +82,10 @@ function showFile(index)
 	term.write("\133")
 
 	-- Name
-	if file.selected then
+	if file.selected and events.isFocused(events.Focus.FILES) then
 		term.setBackgroundColor(colors.lightBlue)
+	elseif file.selected then
+		term.setBackgroundColor(colors.lightGray)
 	else
 		term.setBackgroundColor(colors.white)
 	end

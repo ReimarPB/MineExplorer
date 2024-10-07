@@ -109,3 +109,32 @@ function getCurrentPath()
 	return "/" .. files[index].path
 end
 
+-- Expands folders if necessary to find and select the path
+function getIndexFromPath(path, startIndex)
+	path = string.gsub(path, "^/", "")
+	if #path == 0 then return (startIndex or 2) - 1 end
+
+	if startIndex == nil then startIndex = 1 end
+
+	local fileName = string.match(path, "^[^/]+")
+	local depth = nil
+
+	for i, file in ipairs(files) do
+		if depth == nil and i >= startIndex then depth = file.depth end
+
+		if i >= startIndex and file.name == fileName and file.depth == depth then
+			setSelection(i)
+			local f = fs.open("debug.txt", "a")
+			f.write("found file " .. fileName .. " at index " .. i .. "\n")
+			f.close()
+
+			if file.type == FileType.FILE then return i end
+
+			expand()
+			return getIndexFromPath(string.sub(path, #fileName + 1), i + 1)
+		end
+	end
+
+	return nil
+end
+

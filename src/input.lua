@@ -4,6 +4,7 @@ import("renderer")
 -- * text
 -- * x
 -- * y
+-- * cursorPos
 -- * color
 -- * backgroundColor
 -- * highlightColor
@@ -14,7 +15,7 @@ local cursorPos = nil
 
 function create(input)
 	currentInput = input
-	cursorPos = #currentInput.text + 1
+	cursorPos = math.min(input.cursorPos or math.huge, #currentInput.text + 1)
 	events.setFocus(events.Focus.INPUT)
 	renderer.drawInput(currentInput, cursorPos)
 end
@@ -69,3 +70,21 @@ events.addListener("key", events.Focus.INPUT, function(key)
 	end
 end)
 
+events.addListener("mouse_click", events.Focus.INPUT, function(btn, x, y)
+	if btn ~= 1 then return end
+
+	if y ~= currentInput.y then
+		endInput()
+		return
+	end
+
+	local newCursorPos = math.min(x - currentInput.x + 1, #currentInput.text + 1)
+
+	if newCursorPos < 1 then
+		endInput()
+		return
+	end
+
+	cursorPos = newCursorPos
+	renderer.drawInput(currentInput, cursorPos)
+end)

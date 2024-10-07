@@ -33,3 +33,7 @@ function setFocus(focus)
 	currentFocus = focus
 end
 
+function isFocused(focus)
+	return currentFocus == focus
+end
+

@@ -22,8 +22,9 @@ term.clear()
 files.loadAllFiles()
 files.files[1].selected = true
 
+events.setFocus(events.Focus.FILES)
+
 renderer.showEverything()
 
-events.setFocus(events.Focus.FILES)
 events.listen()
 

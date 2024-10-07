@@ -11,7 +11,7 @@ local function clearScreen()
 end
 
 local function getProgramForExtension(extension)
-	if not settigns then return "edit" end
+	if not settings then return "edit" end
 	return settings.get("minex.programs." .. extension, settings.get("minex.default_program", "edit"))
 end
 
@@ -42,6 +42,42 @@ local function doSecondaryAction(file)
 		shell.setDir(file.path)
 		return true
 	end
+end
+
+local function editPath(pos)
+	events.setFocus(events.Focus.INPUT)
+	renderer.showFile(files.getSelectedIndex())
+
+	input.create({
+		text = files.getCurrentPath(),
+		x = 1,
+		y = 1,
+		cursorPos = pos,
+		color = colors.black,
+		backgroundColor = colors.lightGray,
+		highlightColor = colors.lightGray,
+		cancelKey = keys.f6,
+		callback = function(newPath)
+			if not fs.exists(newPath) then
+				renderer.showPath()
+				return false
+			end
+
+			local index = files.getIndexFromPath(newPath)
+			if index == nil then
+				renderer.showPath()
+				return false
+			end
+
+			files.setSelection(index)
+			renderer.updateSelection(selection, index)
+
+			renderer.showFiles()
+			renderer.showPath()
+
+			return true
+		end
+	})
 end
 
 events.addListener("key", events.Focus.FILES, function(key)
@@ -109,6 +145,9 @@ events.addListener("key", events.Focus.FILES, function(key)
 		local file = files.files[selection]
 		return doSecondaryAction(file)
 
+	elseif key == keys.f6 then
+		editPath(nil)
+
 	-- Rename on F2
 	elseif key == keys.f2 then
 		if not selection then return end
@@ -155,6 +194,11 @@ end)
 
 events.addListener("mouse_click", events.Focus.FILES, function(btn, x, y)
 	if btn ~= 1 then return end
+
+	if y == 1 then
+		editPath(x)
+		return
+	end
 
 	local oldSelection = files.getSelectedIndex()
 	local fileIndex = renderer.getFileIndexFromY(y)
