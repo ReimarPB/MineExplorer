@@ -46,7 +46,9 @@ end
 
 local function editPath(pos)
 	events.setFocus(events.Focus.INPUT)
-	renderer.showFile(files.getSelectedIndex())
+
+	local index = files.getSelectedIndex()
+	if index then renderer.showFile(files.getSelectedIndex()) end
 
 	input.create({
 		text = files.getCurrentPath(),
@@ -63,7 +65,7 @@ local function editPath(pos)
 				return false
 			end
 
-			local index = files.getIndexFromPath(newPath)
+			local index = files.selectFromPath(newPath)
 			if index == nil then
 				renderer.showPath()
 				return false

@@ -17,10 +17,20 @@ if settings and not settings.get("minex.default_program") then
 	settings.save()
 end
 
-term.clear()
-
 files.loadAllFiles()
-files.files[1].selected = true
+
+local path = ...
+if path == nil then
+	files.files[1].selected = true
+elseif fs.exists(shell.resolve(path)) then
+	files.selectFromPath(shell.resolve(path))
+else
+	term.setTextColor(colors.red)
+	print("Invalid path: " .. path)
+	return
+end
+
+term.clear()
 
 events.setFocus(events.Focus.FILES)
 

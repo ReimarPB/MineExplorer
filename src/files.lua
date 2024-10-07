@@ -24,7 +24,7 @@ local function loadFiles(path, depth, index)
 		if filePath == file and fs.getDrive(filePath) ~= "hdd" then type = FileType.DISK
 		elseif fs.isDir(filePath) then type = FileType.DIRECTORY
 		else type = FileType.FILE end
-		
+
 		table.insert(newFiles, {
 			name = file,
 			path = filePath,
@@ -64,13 +64,13 @@ end
 function setSelection(index)
 	for i, file in ipairs(files) do
 		file.selected = i == index
-	end	
+	end
 end
 
 function deselect()
 	for _, file in ipairs(files) do
 		file.selected = false
-	end	
+	end
 end
 
 function expand()
@@ -109,8 +109,8 @@ function getCurrentPath()
 	return "/" .. files[index].path
 end
 
--- Expands folders if necessary to find and select the path
-function getIndexFromPath(path, startIndex)
+-- Expands folders if necessary to find and select the path, returns index of selected file
+function selectFromPath(path, startIndex)
 	path = string.gsub(path, "^/", "")
 	if #path == 0 then return (startIndex or 2) - 1 end
 
@@ -131,7 +131,7 @@ function getIndexFromPath(path, startIndex)
 			if file.type == FileType.FILE then return i end
 
 			expand()
-			return getIndexFromPath(string.sub(path, #fileName + 1), i + 1)
+			return selectFromPath(string.sub(path, #fileName + 1), i + 1)
 		end
 	end
 
