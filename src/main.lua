@@ -11,7 +11,7 @@ import("events")
 import("navigation")
 
 -- Set default settings
-if false and settings and not settings.get("minex.default_program") then
+if settings and not settings.get("minex.default_program") then
 	settings.set("minex.default_program", "edit")
 	settings.set("minex.programs.nfp",    "paint")
 	settings.save()
