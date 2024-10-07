@@ -167,7 +167,7 @@ events.addListener("mouse_scroll", events.Focus.FILES, function(direction)
 	local width, height = term.getSize()
 	local newScrollY = scrollY + direction
 
-	if newScrollY < 0 or newScrollY > #files.files - height then return end
+	if newScrollY < 0 or newScrollY > #files.files - height + 1 then return end
 
 	scrollY = newScrollY
 

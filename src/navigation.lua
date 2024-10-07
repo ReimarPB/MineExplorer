@@ -71,6 +71,24 @@ events.addListener("key", events.Focus.FILES, function(key)
 		files.setSelection(#files.files)
 		renderer.updateSelection(selection, #files.files)
 
+	elseif key == keys.pageUp then
+		if not selection then selection = #files.files + 1 end
+
+		local _, height = term.getSize()
+		local newSelection = math.max(1, selection - height + 2)
+
+		files.setSelection(newSelection)
+		renderer.updateSelection(selection, newSelection)
+
+	elseif key == keys.pageDown then
+		if not selection then selection = 0 end
+
+		local _, height = term.getSize()
+		local newSelection = math.min(#files.files, selection + height - 2)
+
+		files.setSelection(newSelection)
+		renderer.updateSelection(selection, newSelection)
+
 	elseif key == keys.right or key == keys.l then
 		files.expand()
 		renderer.showFiles()
