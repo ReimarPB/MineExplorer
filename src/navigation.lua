@@ -59,8 +59,9 @@ local function editPath(pos)
 		backgroundColor = colors.lightGray,
 		highlightColor = colors.lightGray,
 		cancelKey = keys.f6,
+		autocomplete = true,
 		callback = function(newPath)
-			if not fs.exists(newPath) then
+			if #newPath == 0 or not fs.exists(newPath) then
 				renderer.showPath()
 				return false
 			end
@@ -164,12 +165,12 @@ events.addListener("key", events.Focus.FILES, function(key)
 			highlightColor = colors.lightGray,
 			cancelKey = keys.f2,
 			callback = function(newName)
-				if #newName == 0 then return true end
+				if #newName == 0 then return end
 
 				local newPath = fs.combine(fs.getDir(file.path), newName)
 
 				if fs.exists(newPath) or fs.isReadOnly(file.path) then
-					return false
+					return
 				end
 
 				fs.move(file.path, newPath)
@@ -178,7 +179,7 @@ events.addListener("key", events.Focus.FILES, function(key)
 
 				renderer.showPath()
 
-				return true
+				return
 			end
 		})
 	end

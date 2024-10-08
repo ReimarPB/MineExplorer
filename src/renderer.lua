@@ -154,8 +154,21 @@ function drawInput(input, cursorPos)
 	term.setBackgroundColor(input.highlightColor)
 	term.write(input.text)
 
+	local completion = ""
+	if input.autocomplete and fs.complete then
+		local completions = fs.complete(input.text, "/")
+
+		if #completions > 0 then
+			completion = completions[1]
+
+			term.setTextColor(colors.gray)
+			term.write(completion)
+		end
+	end
+
+	term.setTextColor(input.color)
 	term.setBackgroundColor(input.backgroundColor)
-	term.write(string.rep(" ", width - input.x - #input.text))
+	term.write(string.rep(" ", width - input.x - #input.text - #completion))
 
 	term.setCursorBlink(true)
 	term.setCursorPos(input.x + cursorPos - 1, input.y)

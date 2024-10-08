@@ -9,6 +9,7 @@ import("renderer")
 -- * backgroundColor
 -- * highlightColor
 -- * cancelKey
+-- * autocomplete
 -- * callback
 local currentInput = nil
 local cursorPos = nil
@@ -20,7 +21,9 @@ function create(input)
 	renderer.drawInput(currentInput, cursorPos)
 end
 
-local function endInput()
+local function endInput(result)
+	currentInput.callback(result)
+
 	currentInput = nil
 	events.setFocus(events.Focus.FILES)
 	renderer.showFiles()
@@ -56,17 +59,24 @@ events.addListener("key", events.Focus.INPUT, function(key)
 		cursorPos = cursorPos - 1
 		renderer.drawInput(currentInput, cursorPos)
 
+	elseif key == keys.tab and currentInput.autocomplete and fs.complete then
+		local completions = fs.complete(currentInput.text, "/")
+		if #completions > 0 then
+			currentInput.text = currentInput.text .. completions[1]
+			cursorPos = #currentInput.text + 1
+			renderer.drawInput(currentInput, cursorPos)
+		end
+
 	elseif key == keys.delete then
 		if cursorPos == #currentInput.text + 1 then return end
 		currentInput.text = string.sub(currentInput.text, 1, cursorPos - 1) .. string.sub(currentInput.text, cursorPos + 1)
 		renderer.drawInput(currentInput, cursorPos)
 
 	elseif key == keys.enter then
-		currentInput.callback(currentInput.text)
-		endInput()
+		endInput(currentInput.text)
 
 	elseif key == currentInput.cancelKey then
-		endInput()
+		endInput("")
 	end
 end)
 
@@ -74,14 +84,14 @@ events.addListener("mouse_click", events.Focus.INPUT, function(btn, x, y)
 	if btn ~= 1 then return end
 
 	if y ~= currentInput.y then
-		endInput()
+		endInput("")
 		return
 	end
 
 	local newCursorPos = math.min(x - currentInput.x + 1, #currentInput.text + 1)
 
 	if newCursorPos < 1 then
-		endInput()
+		endInput("")
 		return
 	end
 
