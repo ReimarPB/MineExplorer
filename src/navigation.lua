@@ -151,6 +151,24 @@ events.addListener("key", events.Focus.FILES, function(key)
 	elseif key == keys.f6 then
 		editPath(nil)
 
+	-- Refresh current folder
+	elseif key == keys.f5 then
+		local index = files.getSelectedIndex()
+
+		if not index then
+			files.loadAllFiles()
+			renderer.showFiles()
+
+			return
+		end
+
+		if not files.files[index].expanded then return end
+
+		files.collapse()
+		files.expand()
+
+		renderer.showFiles()
+
 	-- Rename on F2
 	elseif key == keys.f2 then
 		if not selection then return end

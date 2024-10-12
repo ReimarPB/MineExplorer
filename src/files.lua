@@ -51,6 +51,13 @@ local function loadFiles(path, depth, index)
 end
 
 function loadAllFiles()
+	-- Reset file list if there are any
+	if #files > 0 then
+		for i, _ in pairs(files) do
+			files[i] = nil
+		end
+	end
+
 	loadFiles("/", 0, 0)
 end
 
@@ -124,13 +131,11 @@ function selectFromPath(path, startIndex)
 
 		if i >= startIndex and file.name == fileName and file.depth == depth then
 			setSelection(i)
-			local f = fs.open("debug.txt", "a")
-			f.write("found file " .. fileName .. " at index " .. i .. "\n")
-			f.close()
 
 			if file.type == FileType.FILE then return i end
 
 			expand()
+
 			return selectFromPath(string.sub(path, #fileName + 1), i + 1)
 		end
 	end
