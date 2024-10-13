@@ -72,6 +72,58 @@ local function editFileName(index, file, cancelKey, finishCallback, cancelCallba
 	})
 end
 
+function createFile()
+	local index = files.getCurrentFolderIndex()
+	local newIndex, newDepth, newPath
+
+	if index ~= nil and index > 0 and fs.isReadOnly(files.files[index].path) then
+		status.error("Can't create files in read-only folder")
+		return
+	end
+
+	if index == nil or index == 0 then
+		newIndex = #files.files + 1
+		newDepth = 1
+		newPath = "/"
+	else
+		newIndex = index + files.getAmountOfFilesInFolder(index)
+		newDepth = files.files[index].depth + 1
+		newPath = files.files[index].path
+	end
+
+	local file = {
+		name = "",
+		path = newPath,
+		type = files.FileType.FILE,
+		readonly = false,
+		depth = newDepth,
+		selected = true,
+		expanded = false,
+	}
+	table.insert(files.files, newIndex, file)
+
+	files.setSelection(newIndex)
+	renderer.scrollTo(newIndex)
+	renderer.showFiles()
+
+	editFileName(newIndex, file, keys.insert,
+		function(newName)
+			local path = fs.combine(newPath, newName)
+
+			fs.open(path, "w").close()
+
+			files.files[newIndex].name = newName
+			files.files[newIndex].path = path
+		end,
+		function()
+			table.remove(files.files, newIndex)
+
+			files.setSelection(index)
+			renderer.showFiles()
+		end
+	)
+end
+
 local function editPath(pos)
 	events.setFocus(events.Focus.INPUT)
 
@@ -224,57 +276,8 @@ events.addListener("key", events.Focus.FILES, function(key)
 			function() end
 		)
 
-	-- Create new file on Ins
 	elseif key == keys.insert then
-		local index = files.getCurrentFolderIndex()
-		local newIndex, newDepth, newPath
-
-		if index ~= nil and index > 0 and fs.isReadOnly(files.files[index].path) then
-			status.error("Can't create files in read-only folder")
-			return
-		end
-
-		if index == nil or index == 0 then
-			newIndex = #files.files + 1
-			newDepth = 1
-			newPath = "/"
-		else
-			newIndex = index + files.getAmountOfFilesInFolder(index)
-			newDepth = files.files[index].depth + 1
-			newPath = files.files[index].path
-		end
-
-		local file = {
-			name = "",
-			path = newPath,
-			type = files.FileType.FILE,
-			readonly = false,
-			depth = newDepth,
-			selected = true,
-			expanded = false,
-		}
-		table.insert(files.files, newIndex, file)
-
-		files.setSelection(newIndex)
-		renderer.scrollTo(newIndex)
-		renderer.showFiles()
-
-		editFileName(newIndex, file, keys.insert,
-			function(newName)
-				local path = fs.combine(newPath, newName)
-
-				fs.open(path, "w").close()
-
-				files.files[newIndex].name = newName
-				files.files[newIndex].path = path
-			end,
-			function()
-				table.remove(files.files, newIndex)
-
-				files.setSelection(index)
-				renderer.showFiles()
-			end
-		)
+		createFile()
 	end
 
 end)

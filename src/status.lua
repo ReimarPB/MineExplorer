@@ -16,8 +16,8 @@ local statusTimer = nil
 local activeButton = nil
 
 local leftButtons = {
-	{ text = "+",   callback = (function() end) },
-	{ text = "\16", condition = (function() return files.getSelectedIndex() ~= nil end), callback = navigation.executeCurrentFile },
+	{ text = "+",   callback = navigation.createFile },
+	{ text = "\16", callback = navigation.executeCurrentFile, condition = (function() return files.getSelectedIndex() ~= nil end) },
 }
 
 local rightButtons = {
