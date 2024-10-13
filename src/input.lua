@@ -1,5 +1,3 @@
-import("renderer")
-
 -- Input
 -- * text
 -- * x
@@ -98,3 +96,4 @@ events.addListener("mouse_click", events.Focus.INPUT, function(btn, x, y)
 	cursorPos = newCursorPos
 	renderer.drawInput(currentInput, cursorPos)
 end)
+

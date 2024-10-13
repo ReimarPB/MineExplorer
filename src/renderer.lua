@@ -1,6 +1,3 @@
-import("files")
-import("events")
-
 local scrollY = 0
 local CONTENT_OFFSET_Y = 1
 
@@ -24,9 +21,9 @@ function showFiles()
 
 	-- Fill remaining space
 	local width, height = term.getSize()
-	if #files < height then
+	if #files < height - 1 then
 		term.setBackgroundColor(colors.white)
-		for i = #files.files + 1 + CONTENT_OFFSET_Y, height do
+		for i = #files.files + 1 + CONTENT_OFFSET_Y, height - 1 do
 			term.setCursorPos(1, i)
 			term.write(string.rep(" ", width))
 		end
@@ -37,7 +34,7 @@ function showFile(index)
 	local width, height = term.getSize()
 	local y = index - scrollY + CONTENT_OFFSET_Y
 
-	if y < 1 + CONTENT_OFFSET_Y or y > height then return end
+	if y < 1 + CONTENT_OFFSET_Y or y >= height then return end
 
 	local file = files.files[index]
 
@@ -106,6 +103,7 @@ end
 function showEverything()
 	showPath()
 	showFiles()
+	status.draw()
 end
 
 -- Returns whether it actually scrolled

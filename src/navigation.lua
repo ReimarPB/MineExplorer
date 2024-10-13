@@ -1,8 +1,3 @@
-import("events")
-import("files")
-import("renderer")
-import("input")
-
 local function clearScreen()
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
@@ -153,16 +148,14 @@ events.addListener("key", events.Focus.FILES, function(key)
 
 	-- Refresh current folder
 	elseif key == keys.f5 then
-		local index = files.getSelectedIndex()
-
-		if not index then
+		if not selection then
 			files.loadAllFiles()
 			renderer.showFiles()
 
 			return
 		end
 
-		if not files.files[index].expanded then return end
+		if not files.files[selection].expanded then return end
 
 		files.collapse()
 		files.expand()
@@ -173,6 +166,15 @@ events.addListener("key", events.Focus.FILES, function(key)
 	elseif key == keys.f2 then
 		if not selection then return end
 		local file = files.files[selection]
+
+		if fs.isReadOnly(files.getCurrentPath()) then
+			status.set({
+				text = "File is read-only",
+				type = status.Type.ERROR,
+			})
+			status.clearAfter(2)
+			return
+		end
 
 		input.create({
 			text = file.name,

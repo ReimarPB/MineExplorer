@@ -9,6 +9,8 @@ import("files")
 import("renderer")
 import("events")
 import("navigation")
+import("input")
+import("status")
 
 -- Set default settings
 if settings and not settings.get("minex.default_program") then
