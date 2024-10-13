@@ -40,6 +40,38 @@ function executeCurrentFile()
 	return doSecondaryAction(file)
 end
 
+local function editFileName(index, file, cancelKey, finishCallback, cancelCallback)
+	input.create({
+		text = file.name,
+		x = file.depth + 3,
+		y = renderer.getYFromFileIndex(index),
+		color = colors.black,
+		backgroundColor = colors.white,
+		highlightColor = colors.lightGray,
+		cancelKey = cancelKey,
+		callback = function(newName)
+			if #newName == 0 then
+				cancelCallback()
+				return
+			end
+
+			local newPath = fs.combine(fs.getDir(file.path), newName)
+
+			if fs.exists(newPath) then
+				status.error("File name is already in use")
+				cancelCallback()
+				return
+			end
+
+			finishCallback(newName)
+
+			renderer.showPath()
+
+			return
+		end
+	})
+end
+
 local function editPath(pos)
 	events.setFocus(events.Focus.INPUT)
 
@@ -155,14 +187,16 @@ events.addListener("key", events.Focus.FILES, function(key)
 
 	-- Refresh current folder
 	elseif key == keys.f5 then
-		if not selection then
+		local index = files.getCurrentFolderIndex()
+
+		if not index then
 			files.loadAllFiles()
 			renderer.showFiles()
 
 			return
 		end
 
-		if not files.files[selection].expanded then return end
+		if not files.files[index].expanded then return end
 
 		files.collapse()
 		files.expand()
@@ -179,33 +213,68 @@ events.addListener("key", events.Focus.FILES, function(key)
 			return
 		end
 
-		input.create({
-			text = file.name,
-			x = file.depth + 3,
-			y = renderer.getYFromFileIndex(selection),
-			color = colors.black,
-			backgroundColor = colors.white,
-			highlightColor = colors.lightGray,
-			cancelKey = keys.f2,
-			callback = function(newName)
-				if #newName == 0 then return end
-
+		editFileName(selection, file, keys.f2,
+			function(newName)
 				local newPath = fs.combine(fs.getDir(file.path), newName)
-
-				if fs.exists(newPath) then
-					status.error("File name is already in use")
-					return
-				end
 
 				fs.move(file.path, newPath)
 				file.name = newName
 				file.path = newPath
+			end,
+			function() end
+		)
 
-				renderer.showPath()
+	-- Create new file on Ins
+	elseif key == keys.insert then
+		local index = files.getCurrentFolderIndex()
+		local newIndex, newDepth, newPath
 
-				return
+		if index ~= nil and index > 0 and fs.isReadOnly(files.files[index].path) then
+			status.error("Can't create files in read-only folder")
+			return
+		end
+
+		if index == nil or index == 0 then
+			newIndex = #files.files + 1
+			newDepth = 1
+			newPath = "/"
+		else
+			newIndex = index + files.getAmountOfFilesInFolder(index)
+			newDepth = files.files[index].depth + 1
+			newPath = files.files[index].path
+		end
+
+		local file = {
+			name = "",
+			path = newPath,
+			type = files.FileType.FILE,
+			readonly = false,
+			depth = newDepth,
+			selected = true,
+			expanded = false,
+		}
+		table.insert(files.files, newIndex, file)
+
+		files.setSelection(newIndex)
+		renderer.scrollTo(newIndex)
+		renderer.showFiles()
+
+		editFileName(newIndex, file, keys.insert,
+			function(newName)
+				local path = fs.combine(newPath, newName)
+
+				fs.open(path, "w").close()
+
+				files.files[newIndex].name = newName
+				files.files[newIndex].path = path
+			end,
+			function()
+				table.remove(files.files, newIndex)
+
+				files.setSelection(index)
+				renderer.showFiles()
 			end
-		})
+		)
 	end
 
 end)

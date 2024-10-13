@@ -107,7 +107,7 @@ function showEverything()
 end
 
 -- Returns whether it actually scrolled
-local function scrollTo(index)
+function scrollTo(index)
 	local _, height = term.getSize()
 	height = height - CONTENT_OFFSET_Y
 

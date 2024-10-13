@@ -116,6 +116,25 @@ function getCurrentPath()
 	return "/" .. files[index].path
 end
 
+function getCurrentFolderIndex()
+	local index = getSelectedIndex()
+	if not index then return nil end
+
+	while files[index] and (files[index].type == FileType.FILE or not files[index].expanded) do
+		index = index - 1
+	end
+
+	return index
+end
+
+function getAmountOfFilesInFolder(index)
+	local i = index + 1
+	while i <= #files and files[i].depth == files[index].depth + 1 do
+		i = i + 1
+	end
+	return i - index
+end
+
 -- Expands folders if necessary to find and select the path, returns index of selected file
 function selectFromPath(path, startIndex)
 	path = string.gsub(path, "^/", "")

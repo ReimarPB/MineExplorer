@@ -21,7 +21,7 @@ local leftButtons = {
 }
 
 local rightButtons = {
-	{ text = "i",    callback = (function() end) },
+	{ text = "?",    callback = (function() end) },
 	{ text = "\215", callback = (function() clearScreen() return true end) },
 }
 
