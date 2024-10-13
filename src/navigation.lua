@@ -56,8 +56,14 @@ local function editPath(pos)
 		cancelKey = keys.f6,
 		autocomplete = true,
 		callback = function(newPath)
-			if #newPath == 0 or not fs.exists(newPath) then
+			if #newPath == 0 then
 				renderer.showPath()
+				return
+			end
+
+			if not fs.exists(newPath) then
+				renderer.showPath()
+				status.error("Path doesn't exist")
 				return false
 			end
 
@@ -168,11 +174,7 @@ events.addListener("key", events.Focus.FILES, function(key)
 		local file = files.files[selection]
 
 		if fs.isReadOnly(files.getCurrentPath()) then
-			status.set({
-				text = "File is read-only",
-				type = status.Type.ERROR,
-			})
-			status.clearAfter(2)
+			status.error("File is read-only")
 			return
 		end
 
@@ -189,7 +191,8 @@ events.addListener("key", events.Focus.FILES, function(key)
 
 				local newPath = fs.combine(fs.getDir(file.path), newName)
 
-				if fs.exists(newPath) or fs.isReadOnly(file.path) then
+				if fs.exists(newPath) then
+					status.error("File name is already in use")
 					return
 				end
 
