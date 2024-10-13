@@ -6,8 +6,8 @@ _G["import"] = function(name)
 end
 
 import("files")
-import("renderer")
 import("events")
+import("renderer")
 import("navigation")
 import("input")
 import("status")

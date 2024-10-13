@@ -116,8 +116,8 @@ local function scrollTo(index)
 		return true
 	end
 
-	if index > scrollY + height - 1 then
-		scrollY = index - height
+	if index > scrollY + height - 2 then
+		scrollY = index - height + 1
 		return true
 	end
 
@@ -136,6 +136,9 @@ function updateSelection(oldIndex, newIndex)
 end
 
 function getFileIndexFromY(y)
+	local _, height = term.getSize()
+	if y == height then return nil end
+
 	return y + scrollY - CONTENT_OFFSET_Y
 end
 
@@ -180,7 +183,7 @@ events.addListener("mouse_scroll", events.Focus.FILES, function(direction)
 	local width, height = term.getSize()
 	local newScrollY = scrollY + direction
 
-	if newScrollY < 0 or newScrollY > #files.files - height + 1 then return end
+	if newScrollY < 0 or newScrollY > #files.files - height + 2 then return end
 
 	scrollY = newScrollY
 
