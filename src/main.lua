@@ -4,6 +4,12 @@ _G["import"] = function(name)
 	os.loadAPI(fs.combine(dir, name .. ".lua"))
 	if _G[name .. ".lua"] then _G[name] = _G[name .. ".lua"] end
 end
+_G["clearScreen"] = function()
+	term.setBackgroundColor(colors.black)
+	term.setTextColor(colors.white)
+	term.setCursorPos(1, 1)
+	term.clear()
+end
 
 import("files")
 import("events")

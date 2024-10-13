@@ -1,10 +1,3 @@
-local function clearScreen()
-	term.setBackgroundColor(colors.black)
-	term.setTextColor(colors.white)
-	term.setCursorPos(1, 1)
-	term.clear()
-end
-
 local function getProgramForExtension(extension)
 	if not settings then return "edit" end
 	return settings.get("minex.programs." .. extension, settings.get("minex.default_program", "edit"))
@@ -37,6 +30,14 @@ local function doSecondaryAction(file)
 		shell.setDir(file.path)
 		return true
 	end
+end
+
+function executeCurrentFile()
+	local index = files.getSelectedIndex()
+	if index == nil then return end
+
+	local file = files.files[index]
+	return doSecondaryAction(file)
 end
 
 local function editPath(pos)
@@ -226,6 +227,9 @@ events.addListener("mouse_click", events.Focus.FILES, function(btn, x, y)
 		return
 	end
 
+	local _, height = term.getSize()
+	if y == height then return end
+
 	local oldSelection = files.getSelectedIndex()
 	local fileIndex = renderer.getFileIndexFromY(y)
 	local file = files.files[fileIndex]
@@ -233,8 +237,7 @@ events.addListener("mouse_click", events.Focus.FILES, function(btn, x, y)
 	-- Deselect when pressing outside
 	if not file then
 		files.deselect()
-		renderer.showFiles()
-		renderer.showPath()
+		renderer.showEverything()
 		return
 	end
 

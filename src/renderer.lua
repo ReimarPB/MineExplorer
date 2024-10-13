@@ -133,12 +133,10 @@ function updateSelection(oldIndex, newIndex)
 		showFile(newIndex)
 	end
 	showPath()
+	status.draw()
 end
 
 function getFileIndexFromY(y)
-	local _, height = term.getSize()
-	if y == height then return nil end
-
 	return y + scrollY - CONTENT_OFFSET_Y
 end
 
