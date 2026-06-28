@@ -2,6 +2,7 @@ import("events")
 import("files")
 import("renderer")
 import("input")
+import("popup")
 
 local function clearScreen()
 	term.setBackgroundColor(colors.black)
@@ -199,6 +200,26 @@ events.addListener("key", events.Focus.FILES, function(key)
 
 				return
 			end
+		})
+
+	-- Delete
+	elseif key == keys.delete then
+		if not selection then return end
+		local file = files.files[selection]
+
+		local filetype = file.type == files.FileType.FILE and "file" or "folder"
+
+		if file.readonly then
+		end
+
+		popup.create({
+			type = "danger",
+			lines = {
+				{ type = "text", text = "Delete " .. filetype .. " `" .. file.name .. "`?" },
+				{ type = "spacer" },
+				{ type = "button", text = "Delete", buttonType = "danger", focus = true },
+				{ type = "button", text = "Cancel" },
+			},
 		})
 	end
 

@@ -4,6 +4,7 @@ local currentFocus = nil;
 Focus = {
 	FILES = 0,
 	INPUT = 1,
+	POPUP = 2,
 }
 
 function addListener(event, focus, callback)
