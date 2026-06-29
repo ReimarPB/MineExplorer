@@ -1,6 +1,3 @@
-import("renderer")
-import("events")
-
 -- Input
 -- * text
 -- * x
@@ -26,6 +23,7 @@ local function endInput(result)
 	currentInput.callback(result)
 
 	currentInput = nil
+	term.setCursorBlink(false)
 	events.setFocus(events.Focus.FILES)
 	renderer.showFiles()
 end

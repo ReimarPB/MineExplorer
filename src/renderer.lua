@@ -1,6 +1,3 @@
-import("files")
-import("events")
-
 local scrollY = 0
 local CONTENT_OFFSET_Y = 1
 

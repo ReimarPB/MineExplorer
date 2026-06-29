@@ -1,9 +1,7 @@
-import("events")
-
 -- Popup
 -- * type
 -- * lines
--- * onclick
+-- * onsubmit
 local currentPopup = nil
 local focusedButton = nil
 local buttonAmount = nil
@@ -25,7 +23,22 @@ function create(popup)
 	drawPopup(currentPopup)
 end
 
-function getLineLength(line)
+local function submit(popup, button)
+	local btnIdx = 0
+	for _, line in ipairs(popup.lines) do
+		if line.type == "button" then btnIdx = btnIdx + 1 end
+		if btnIdx == button then
+			popup.onsubmit(line.text)
+			break
+		end
+	end
+
+	currentPopup = nil
+	events.setFocus(events.Focus.FILES)
+	renderer.showEverything()
+end
+
+local function getLineLength(line)
 	if line.type == "text" or line.type == "button" then return #line.text end
 	if line.type == "spacer" then return 0 end
 end
@@ -103,12 +116,15 @@ end
 
 events.addListener("key", events.Focus.POPUP, function(key)
 	if key == keys.down or key == keys.j then
-		focusedButton = focusedButton + 1 % buttonAmount
+		focusedButton = focusedButton + 1
+		if focusedButton > buttonAmount then focusedButton = 1 end
 		drawPopup(currentPopup)
 	elseif key == keys.up or key == keys.k then
 		focusedButton = focusedButton - 1
 		if focusedButton == 0 then focusedButton = buttonAmount end
 		drawPopup(currentPopup)
+	elseif key == keys.enter or key == keys.space then
+		submit(currentPopup, focusedButton)
 	end
 end)
 

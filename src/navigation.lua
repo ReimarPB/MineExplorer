@@ -1,9 +1,3 @@
-import("events")
-import("files")
-import("renderer")
-import("input")
-import("popup")
-
 local function clearScreen()
 	term.setBackgroundColor(colors.black)
 	term.setTextColor(colors.white)
@@ -220,6 +214,7 @@ events.addListener("key", events.Focus.FILES, function(key)
 				{ type = "button", text = "Delete", buttonType = "danger", focus = true },
 				{ type = "button", text = "Cancel" },
 			},
+			onsubmit = (function() end),
 		})
 	end
 
