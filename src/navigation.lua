@@ -78,6 +78,24 @@ local function editPath(pos)
 	})
 end
 
+local function refreshCurrentFolder()
+	local index = files.getSelectedIndex()
+
+	if not index then
+		files.loadAllFiles()
+		renderer.showFiles()
+
+		return
+	end
+
+	if not files.files[index].expanded then return end
+
+	files.collapse()
+	files.expand()
+
+	renderer.showFiles()
+end
+
 events.addListener("key", events.Focus.FILES, function(key)
 	local selection = files.getSelectedIndex()
 
@@ -146,23 +164,8 @@ events.addListener("key", events.Focus.FILES, function(key)
 	elseif key == keys.f6 then
 		editPath(nil)
 
-	-- Refresh current folder
 	elseif key == keys.f5 then
-		local index = files.getSelectedIndex()
-
-		if not index then
-			files.loadAllFiles()
-			renderer.showFiles()
-
-			return
-		end
-
-		if not files.files[index].expanded then return end
-
-		files.collapse()
-		files.expand()
-
-		renderer.showFiles()
+		refreshCurrentFolder()
 
 	-- Rename on F2
 	elseif key == keys.f2 then
@@ -214,7 +217,17 @@ events.addListener("key", events.Focus.FILES, function(key)
 				{ type = "button", text = "Delete", buttonType = "danger", focus = true },
 				{ type = "button", text = "Cancel" },
 			},
-			onsubmit = (function() end),
+			onsubmit = (function(btn)
+				if btn == "Delete" then
+					local index = files.getParentIndex(files.getSelectedIndex())
+					files.setSelection(index)
+					renderer.showPath()
+
+					fs.delete(file.path)
+
+					refreshCurrentFolder()
+				end
+			end),
 		})
 	end
 

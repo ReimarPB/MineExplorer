@@ -1,6 +1,7 @@
 _G["dir"] = fs.getDir(shell.getRunningProgram())
 _G["shell"] = shell
-_G["import"] = function(name)
+
+function import(name)
 	os.loadAPI(fs.combine(dir, name .. ".lua"))
 	if _G[name .. ".lua"] then _G[name] = _G[name .. ".lua"] end
 end

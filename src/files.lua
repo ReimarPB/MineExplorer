@@ -105,6 +105,16 @@ function collapse()
 	file.expanded = false
 end
 
+function getParentIndex(index)
+	local depth = files[index].depth
+
+	while index > 0 and files[index].depth == depth do
+		index = index - 1
+	end
+
+	return index
+end
+
 function getFileExtension(name)
 	if not string.find(name, "%.") then return "" end
 	return string.gsub(name, "%w*%.", "")
