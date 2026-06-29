@@ -118,10 +118,12 @@ local function editPath(pos)
 end
 
 local function refreshCurrentFolder()
+	local selection = files.getSelectedIndex()
 	local index = files.getCurrentFolderIndex()
 
-	if not index then
+	if index == 0 then
 		files.loadAllFiles()
+		files.setSelection(selection)
 		renderer.showFiles()
 
 		return
