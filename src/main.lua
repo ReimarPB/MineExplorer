@@ -6,9 +6,9 @@ function import(name)
 	if _G[name .. ".lua"] then _G[name] = _G[name .. ".lua"] end
 end
 
+import("events")
 import("files")
 import("renderer")
-import("events")
 import("navigation")
 import("input")
 import("popup")
