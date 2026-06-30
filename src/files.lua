@@ -130,7 +130,14 @@ function getCurrentFolderIndex()
 	local index = getSelectedIndex()
 	if not index then return nil end
 
-	while files[index] and (files[index].type == FileType.FILE or not files[index].expanded) do
+	-- If selected an open folder, return that
+	if files[index].type ~= FileType.FILE and files[index].expanded then
+		return index
+	end
+
+	-- Find parent folder of current file
+	local depth = files[index].depth
+	while files[index] and files[index].depth >= depth do
 		index = index - 1
 	end
 
