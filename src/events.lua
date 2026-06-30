@@ -21,7 +21,7 @@ function listen()
 
 		if listeners[event] then
 			for _, listener in ipairs(listeners[event]) do
-				if listener.focus == currentFocus then
+				if isFocused(listener.focus) then
 					if listener.callback(p1, p2, p3) then return end -- Exit when callback returns true
 					if currentFocus ~= listener.focus then break end -- Break out if focus changed
 				end
@@ -35,6 +35,13 @@ function setFocus(focus)
 end
 
 function isFocused(focus)
+	if type(focus) == "table" then
+		for _, f in ipairs(focus) do
+			if currentFocus == f then return true end
+		end
+		return false
+	end
+
 	return currentFocus == focus
 end
 

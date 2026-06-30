@@ -121,7 +121,7 @@ local function refreshCurrentFolder()
 	local selection = files.getSelectedIndex()
 	local index = files.getCurrentFolderIndex()
 
-	if index == 0 then
+	if not index or index == 0 then
 		files.loadAllFiles()
 		files.setSelection(selection)
 		renderer.showFiles()
@@ -311,7 +311,7 @@ end)
 
 -- Quit when pressing Q
 -- This is in key up to prevent typing 'q' in the terminal
-events.addListener("key_up", events.Focus.FILES, function(key)
+events.addListener("key_up", { events.Focus.FILES, events.Focus.POPUP }, function(key)
 	if key == keys.q then
 		clearScreen()
 		return true

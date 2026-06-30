@@ -6,6 +6,9 @@ local currentPopup = nil
 local focusedButton = nil
 local buttonAmount = nil
 
+local POPUP_PADDING_X = 4
+local POPUP_PADDING_Y = 2
+
 function create(popup)
 	currentPopup = popup
 	focusedButton = 1
@@ -43,20 +46,67 @@ local function getLineLength(line)
 	if line.type == "spacer" then return 0 end
 end
 
-function drawPopup(popup)
-	local width, height = term.getSize()
-	local color = popup.type == "danger" and colors.red or colors.blue
+local function getLineX(line)
+	local width, _ = term.getSize()
+	return math.floor(width / 2 - getLineLength(line) / 2)
+end
 
-	local popupHeight = #popup.lines + 2
+local function getPopupWidth(popup)
 	local popupWidth = 0
 	for _, line in ipairs(popup.lines) do
 		local len = getLineLength(line)
 		if len > popupWidth then popupWidth = len end
 	end
-	popupWidth = popupWidth + 4
+	return popupWidth + POPUP_PADDING_X
+end
 
-	local x = math.floor(width / 2 - popupWidth / 2)
-	local y = math.floor(height / 2 - popupHeight / 2)
+local function getPopupHeight(popup)
+	return #popup.lines + POPUP_PADDING_Y
+end
+
+local function getPopupOffsetX(popupWidth)
+	local width, _ = term.getSize()
+	return math.floor(width / 2 - popupWidth / 2)
+end
+
+local function getPopupOffsetY(popupHeight)
+	local _, height = term.getSize()
+	return math.floor(height / 2 - popupHeight / 2)
+end
+
+local function getButtonIndexFromLine(popup, line)
+	local i = 0
+	for _, l in ipairs(popup.lines) do
+		if l.type == "button" then i = i + 1 end
+		if l == line then return i end
+	end
+	return nil
+end
+
+local function getButtonFromCoords(popup, x, y)
+	local popupWidth = getPopupWidth(popup)
+	local popupHeight = getPopupHeight(popup)
+
+	local lineIdx = y - getPopupOffsetY(popupHeight)
+	local line = popup.lines[lineIdx]
+
+	if not line or line.type ~= "button" then return nil end
+
+	local lineX = getLineX(line)
+	if x < lineX - 1 or x > lineX + getLineLength(line) then return nil end
+
+	return getButtonIndexFromLine(popup, line)
+end
+
+function drawPopup(popup)
+	local width, height = term.getSize()
+	local color = popup.type == "danger" and colors.red or colors.blue
+
+	local popupWidth = getPopupWidth(popup)
+	local popupHeight = getPopupHeight(popup)
+
+	local x = getPopupOffsetX(popupWidth)
+	local y = getPopupOffsetY(popupHeight)
 
 	term.setCursorPos(x, y)
 	term.setTextColor(color)
@@ -80,7 +130,7 @@ function drawPopup(popup)
 		term.setBackgroundColor(colors.white)
 		term.write("\127")
 
-		local lineX = math.floor(width / 2 - getLineLength(line) / 2)
+		local lineX = getLineX(line)
 		if line.type == "text" then
 			term.setCursorPos(lineX, y + i)
 			term.setTextColor(colors.black)
@@ -116,15 +166,38 @@ end
 
 events.addListener("key", events.Focus.POPUP, function(key)
 	if key == keys.down or key == keys.j then
-		focusedButton = focusedButton + 1
+		if not focusedButton then focusedButton = 1
+		else focusedButton = focusedButton + 1 end
+
 		if focusedButton > buttonAmount then focusedButton = 1 end
+
 		drawPopup(currentPopup)
+
 	elseif key == keys.up or key == keys.k then
-		focusedButton = focusedButton - 1
+		if not focusedButton then focusedButton = buttonAmount
+		else focusedButton = focusedButton - 1 end
+
 		if focusedButton == 0 then focusedButton = buttonAmount end
+
 		drawPopup(currentPopup)
+
 	elseif key == keys.enter or key == keys.space then
 		submit(currentPopup, focusedButton)
 	end
+end)
+
+events.addListener("mouse_click", events.Focus.POPUP, function(btn, x, y)
+	if btn ~= 1 then return end
+
+	focusedButton = getButtonFromCoords(currentPopup, x, y)
+
+	drawPopup(currentPopup)
+end)
+
+events.addListener("mouse_up", events.Focus.POPUP, function(btn, x, y)
+	if btn ~= 1 then return end
+	
+	local btnIdx = getButtonFromCoords(currentPopup, x, y)
+	if btnIdx and btnIdx == focusedButton then submit(currentPopup, focusedButton) end
 end)
 
