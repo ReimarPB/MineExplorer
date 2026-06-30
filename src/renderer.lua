@@ -21,12 +21,10 @@ function showFiles()
 
 	-- Fill remaining space
 	local width, height = term.getSize()
-	if #files < height then
-		term.setBackgroundColor(colors.white)
-		for i = #files.files + 1 + CONTENT_OFFSET_Y, height do
-			term.setCursorPos(1, i)
-			term.write(string.rep(" ", width))
-		end
+	term.setBackgroundColor(colors.white)
+	for i = #files.files - scrollY + 1 + CONTENT_OFFSET_Y, height do
+		term.setCursorPos(1, i)
+		term.write(string.rep(" ", width))
 	end
 end
 
